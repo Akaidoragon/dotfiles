@@ -1,0 +1,21 @@
+[submodule "Developer/git/docker-bench-security"]
+	path = Developer/git/docker-bench-security
+	url = https://github.com/docker/docker-bench-security.git
+[submodule "Developer/git/.tmux"]
+	path = Developer/git/.tmux
+	url = https://github.com/gpakosz/.tmux.git
+[submodule "Developer/git/gitignore"]
+	path = Developer/git/gitignore
+	url = https://github.com/github/gitignore
+[submodule "Developer/git/fonts"]
+	path = Developer/git/fonts
+	url = https://github.com/powerline/fonts.git
+[submodule "Developer/git/grml-etc-core"]
+	path = Developer/git/grml-etc-core
+	url = https://github.com/grml/grml-etc-core.git
+[submodule "Developer/git/pwd.sh"]
+	path = Developer/git/pwd.sh
+	url = https://github.com/drduh/pwd.sh.git
+[submodule "Developer/git/secrets"]
+	path = Developer/git/secrets
+	url = git@github.com:anhdle14/secrets.git

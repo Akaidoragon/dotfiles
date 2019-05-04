@@ -1,0 +1,1 @@
+/Users/anhdle14/.config/nvim/init.vim

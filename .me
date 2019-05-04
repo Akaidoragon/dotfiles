@@ -1,0 +1,220 @@
+# External
+## Bash
+if [ ! -n "$BASH" ] ; then
+  [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
+fi
+
+[ -f ~/.profile ] && source ~/.profile
+[ -f ~/.env ] && source ~/.env
+
+## Should only work with .fzf.bash and .fzf.zsh
+[ -f ~/.fzf.`echo $0` ] && source ~/.fzf.`echo $0`
+
+## Pip completions
+function _pip_completion {
+  local words cword
+  read -Ac words
+  read -cn cword
+  reply=( $( COMP_WORDS="$words[*]" \
+             COMP_CWORD=$(( cword-1 )) \
+             PIP_AUTO_COMPLETE=1 $words[1] ) )
+}
+compctl -K _pip_completion pip
+
+## fzf
+export FZF_DEFAULT_OPTS=" \
+    --color=fg:#c0c5ce,bg:#212121,hl:#808080,fg+:#e6e6e6,bg+:#3b3b3b,hl+:#f7c662 \
+    --color=info:#f7c662,prompt:#6699cc,pointer:#a6bc69,marker:#a6bc69,spinner:#f7c662,header:#6699cc"
+
+## ripgrep.
+export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+
+## Less.
+export LESS="--RAW-CONTROL-CHARS"
+export LESS_TERMCAP_mb=$'\e[1;31m' # Start blinking
+export LESS_TERMCAP_md=$'\e[1;34m' # Start bold mode
+export LESS_TERMCAP_me=$'\e[0m' # End all mode
+export LESS_TERMCAP_so=$'\e[38;5;215m' # Start standout mode
+export LESS_TERMCAP_se=$'\e[0m' # End standout mode
+export LESS_TERMCAP_us=$'\e[4;35m' # Start underline
+export LESS_TERMCAP_ue=$'\e[0m' # End underline
+
+# Prompt
+autoload -U promptinit; promptinit
+prompt spaceship
+
+# Exports
+export VISUAL="nvim"
+export EDITOR="$VISUAL"
+export LANG=en_US.UTF-8 export LC_CTYPE=en_US.UTF-8
+
+# Aliases
+## Dotfiles
+alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+
+## Typos
+alias :q='exit'
+alias help='man'
+alias quit='exit'
+
+## Using `ripgrep` as default grep. Proof that this is the fastest. [](https://github.com/BurntSushi/ripgrep)
+alias -g G='|rg'
+
+## Docker cleanup.
+alias docker-prune="yes | docker container prune && yes | docker volume prune && yes | docker image prune"
+
+## Using `exa` instead of `ls`
+alias ls="exa"
+
+## Using `bat` instead of `cat`
+alias cat="bat"
+
+## Suffix
+alias -s tex=nvim
+
+## Get week number
+alias week='date +%V'
+
+## IP addresses
+alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias localip="ipconfig getifaddr end0"
+alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
+
+## Show active network interfaces
+alias ifactive="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
+
+## Print each PATH entry on a separate line
+alias path='echo -e ${PATH//:/\\n}'
+
+## Apps
+alias R="'R' --quiet"
+alias e="emacsclient -c -t"
+alias c="code-insiders -wr"
+alias v="nvim"
+
+## Shortcuts to some dirs
+alias dl="cd ~/Downloads"
+alias dc="cd ~/Documents"
+alias muz="cd ~/Music"
+alias vid="cd ~/Movies"
+alias dev="cd ~/Developer"
+
+# Functions
+
+## Dir FZF
+fd() {
+  local dir
+  dir=$(find ${1:-.} -path '*/\.*' -prune \
+                  -o -type d -print 2> /dev/null | fzf +m) &&
+  cd "$dir"
+}
+
+## Clipboard History FZF
+fh() {
+  echo $( (fc -l 1 || history) | fzf +s --tac | sed 's/ *[0-9]* *//') | pbcopy
+  `pbpaste`
+}
+
+## Chrome History FZF
+ch() {
+  local cols sep
+  cols=$(( COLUMNS / 3 ))
+  sep='{::}'
+
+  cp -f ~/Library/Application\ Support/Google/Chrome\ Canary/Default/History /tmp/h
+
+  sqlite3 -separator $sep /tmp/h \
+    "select substr(title, 1, $cols), url
+     from urls order by last_visit_time desc" |
+  awk -F $sep '{printf "%-'$cols's  \x1b[36m%s\x1b[m\n", $1, $2}' |
+  fzf --ansi --multi | sed 's#.*\(https*://\)#\1#' | xargs open
+}
+
+## Notify in MacOS
+X() {
+  /usr/bin/osascript -e "display notification \"$2\" with title \"$1\""
+}
+
+## Remove all commit in Git
+git-remove-all-commit() {
+    local branch
+    branch=$(git symbolic-ref --short HEAD)
+    echo -e "\nDo you want to remove all your commit in \033[1m$branch\033[0m branch? [Y/n] "
+    read -r response
+    case "$response" in
+        [yY][eE][sS]|[yY])
+            git checkout --orphan latest_branch
+            git add -A
+            git commit -am "Initial commit"
+            git branch -D "$branch"
+            git branch -m "$branch"
+            echo -e "\nTo force update your repository, run this command:\n\n    git push -fu origin $branch"
+            ;;
+        *)
+            echo "Cancelled."
+            ;;
+    esac
+}
+
+## Git commit browser
+fshow() {
+    local commit_hash="echo {} | grep -o '[a-f0-9]\{7\}' | head -1"
+    local view_commit="$commit_hash | xargs -I % sh -c 'git show --color=always % | diff-so-fancy'"
+    git log --color=always \
+        --format="%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset" "$@" | \
+    fzf --no-sort --tiebreak=index --no-multi --reverse --ansi \
+        --header="enter to view, alt-y to copy hash" --preview="$view_commit" \
+        --bind="enter:execute:$view_commit | less -R" \
+        --bind="alt-y:execute:$commit_hash | xclip -selection clipboard"
+}
+
+## README
+readme() {
+    for readme in {readme,README}.{md,MD,markdown,txt,TXT,mkd}; do
+        if [[ -f "$readme" ]]; then
+            cat "$readme"
+        fi
+    done
+}
+
+## Audit
+audit() {
+  sudo praudit -l /dev/auditpipe
+}
+
+## Networks
+open-networks() {
+  sudo lsof -Pni
+}
+
+open-networks-2() {
+  sudo praudit -l /dev/auditpipe
+}
+
+## Encrypt & Decrypt folder
+encrypt() {
+  tar zcvf - $0 | gpg -c > ~/Desktop/backup-$(date +%F-%H%M).tar.gz.gpg
+}
+
+decrypt() {
+  gpg -o ~/Desktop/decrypt-backup.tar.gz -d $0
+  tar zxvf ~/Desktop/decrypt-backup.tar.gz
+}
+
+## Anaconda toogle env
+condatoggle() {
+  if [ $ISCONDA -eq 0 ]; then
+    export PATH="$ANACONDA:$PATH"
+    ISCONDA=1
+  else
+    ISCONDA=0
+    export PATH=${PATH#$HOME/anaconda3/bin:}
+  fi
+}
+
+## END OF FILE #################################################################
+# vim:filetype=zsh foldmethod=marker autoindent expandtab shiftwidth=2
+# Local variables:
+# mode: sh
+# End:
+
