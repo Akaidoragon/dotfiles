@@ -9,7 +9,6 @@ tap "homebrew/services"
 tap "spectralkh/tap"
 tap "thoughtbot/formulae"
 tap "universal-ctags/universal-ctags"
-cask "java"
 brew "ack"
 brew "openssl"
 brew "aircrack-ng"
@@ -206,6 +205,7 @@ cask "google-chrome-canary"
 cask "hwsensors"
 cask "intel-power-gadget"
 cask "iterm2"
+cask "java"
 cask "jetbrains-toolbox"
 cask "karabiner-elements"
 cask "keycastr"
@@ -234,7 +234,7 @@ cask "vlc"
 cask "vscodium"
 cask "workplace-chat"
 cask "spectralkh/tap/flutter"
-mas "com.apple.dt.Xcode", id: 497799835
 mas "com.crowdcafe.windowmagnet", id: 441258766
 mas "com.kablock.macos", id: 1335413823
 mas "org.uBlockLLC.uBlock", id: 1385985095
+mas "Xcode", id: 497799835
