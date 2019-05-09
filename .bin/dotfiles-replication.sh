@@ -19,3 +19,7 @@ ln -s $HOME/Developer/git/grml-etc-core/etc/zsh/zprofile $HOME/.zprofile
 ln -s $HOME/Developer/git/grml-etc-core/etc/zsh/zshenv $HOME/.zshenv
 ln -s $HOME/Developer/git/grml-etc-core/etc/zsh/zshrc $HOME/.zshrc
 
+## Submodules
+config submodule sync
+config submodule update --init --recursive --remote --force
+

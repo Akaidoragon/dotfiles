@@ -16,9 +16,6 @@
 [submodule "Developer/git/pwd.sh"]
 	path = Developer/git/pwd.sh
 	url = https://github.com/drduh/pwd.sh.git
-[submodule "Developer/git/secrets"]
-	path = Developer/git/secrets
-	url = git@github.com:anhdle14/secrets.git
 [submodule "Developer/git/config"]
 	path = Developer/git/config
 	url = https://github.com/drduh/config.git
