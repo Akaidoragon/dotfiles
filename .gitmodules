@@ -19,6 +19,6 @@
 [submodule "Developer/git/secrets"]
 	path = Developer/git/secrets
 	url = git@github.com:anhdle14/secrets.git
-[submodule "/Users/anhdle14/Developer/git/config"]
-	path = /Users/anhdle14/Developer/git/config
+[submodule "Developer/git/config"]
+	path = Developer/git/config
 	url = https://github.com/drduh/config.git

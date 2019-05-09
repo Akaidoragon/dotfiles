@@ -212,6 +212,17 @@ condatoggle() {
   fi
 }
 
+## NPM
+# Export
+npm-backup() {
+  [ -f ~/.npm.bak ] && rm -rf ~/.npm.bak
+  npm list --global --parseable --depth=0 | sed '1d' | awk '{gsub(/\/.*\//,"",$1); print}' > ~/.npm.bak
+}
+
+npm-restore() {
+  [ -f ~/.npm.bak ] && xargs npm install --global < ~/.npm.bak
+}
+
 ## END OF FILE #################################################################
 # vim:filetype=zsh foldmethod=marker autoindent expandtab shiftwidth=2
 # Local variables:

@@ -43,6 +43,7 @@ source $(which virtualenvwrapper_lazy.sh)
 
 # rbenv
 eval "$(rbenv init -)"
+export PATH="$HOME/.rbenv/bin:$PATH"
 
 # NVM
 export NVM_DIR="$HOME/.nvm"
