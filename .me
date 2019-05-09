@@ -223,6 +223,10 @@ npm-restore() {
   [ -f ~/.npm.bak ] && xargs npm install --global < ~/.npm.bak
 }
 
+## Pip
+alias pip2-upgrade="pip freeze — local | grep -v ‘^\-e’ | cut -d = -f 1 | xargs -n1 pip install -U"
+alias pip3-upgrade="pip3 freeze — local | grep -v ‘^\-e’ | cut -d = -f 1 | xargs -n1 pip3 install -U"
+
 ## END OF FILE #################################################################
 # vim:filetype=zsh foldmethod=marker autoindent expandtab shiftwidth=2
 # Local variables:
