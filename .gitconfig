@@ -9,6 +9,10 @@
         abbrev = 12
         attributesfile = ~/.gitattributes
 	excludesfile = ~/.gitignore
+
+[commit]
+	template = ~/.gitmessage
+
 [gpg]
 	program = gpg2
 
